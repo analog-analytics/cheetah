@@ -3,9 +3,10 @@ require 'httmultiparty'
 module Cheetah
 
   class TransactionalMessenger
+    include Logger
     include HTTMultiParty
 
-    base_uri 'http://sysmail.fagms.net'
+    base_uri 'https://sysmail.fagms.net'
 
     def defaults
       {:ACTION => 'SYSTEM'}
@@ -18,19 +19,28 @@ module Cheetah
 
       status_codes = result["systemmail_result"]["emstatuscodes"].split(",")
 
-      raise_errors_if_detected status_codes
+      raise_errors_if_detected message.params, status_codes
 
       status_codes
     end
 
     private
 
-    def raise_errors_if_detected(status_codes)
+    def raise_errors_if_detected(params, status_codes)
       status_codes.each do |code|
         if TransactionalResponseCodes::ERROR.key? code
-           raise CheetahException.new TransactionalResponseCodes::ERROR[code]
+          error_message = TransactionalResponseCodes::ERROR[code]
+          if TransactionalResponseCodes::ERRORS_TO_LOG.include? code
+            logger.info "aid,#{params['AID']},#{params['email']},#{error_message},#{params.inspect}"
+          else
+            raise CheetahException.new error_message
+          end
         end
       end
+    end
+
+    def error_message(status_code)
+
     end
 
   end
