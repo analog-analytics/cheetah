@@ -39,10 +39,6 @@ module Cheetah
       end
     end
 
-    def error_message(status_code)
-
-    end
-
   end
 
 end
