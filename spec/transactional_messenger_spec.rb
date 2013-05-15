@@ -27,6 +27,11 @@ describe Cheetah::TransactionalMessenger do
       FakeWeb.register_uri(:post, 'https://sysmail.fagms.net/c/sm', body: response, content_type: 'text/xml' )
       lambda { @messenger.send_message(@message) }.should raise_error(CheetahException)
     end
+    it 'should raise a CheetahSystemMaintenanceException' do
+      response = "<systemmail_result><emstatuscodes>#{Cheetah::TransactionalResponseCodes::SYSTEM_MAINTENANCE_ERROR}</emstatuscodes></systemmail_result>"
+      FakeWeb.register_uri(:post, 'https://sysmail.fagms.net/c/sm', body: response, content_type: 'text/xml' )
+      lambda { @messenger.send_message(@message) }.should raise_error(CheetahSystemMaintenanceException)
+    end
 
     context 'undeliverable address errors' do
       Cheetah::TransactionalResponseCodes::ERRORS_TO_LOG.each do |error_code|

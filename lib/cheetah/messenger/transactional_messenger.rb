@@ -32,6 +32,8 @@ module Cheetah
           error_message = TransactionalResponseCodes::ERROR[code]
           if TransactionalResponseCodes::ERRORS_TO_LOG.include? code
             logger.info "aid,#{params['AID']},#{params['email']},#{error_message},#{params.inspect}"
+          elsif code == TransactionalResponseCodes::SYSTEM_MAINTENANCE_ERROR
+            raise CheetahSystemMaintenanceException.new error_message
           else
             raise CheetahException.new error_message
           end

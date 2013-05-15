@@ -5,6 +5,8 @@ module Cheetah
 
     ERRORS_TO_LOG = ['-51', '-52', '-53']
 
+    SYSTEM_MAINTENANCE_ERROR = '-30'
+
     ERROR = {
       "-103"  => "The supplied number of parameters (fields or tempfields) does not match the supplied _count number of a paragraph.",
       "-102"  => "An end tag (##Paragraph_End##) was not found for all start tags (##Paragraph_Start##)",
